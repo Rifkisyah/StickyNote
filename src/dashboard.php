@@ -1,3 +1,4 @@
+<?php include "submit.php"; ?>
 <!DOCTYPE html>
 <html lang="en" data-theme="dark">
 <head>
@@ -11,6 +12,8 @@
     <div class="main-container">
         <header>
             <a href="dashboard.html" id="logo">Sticky Note</a>
+            <span style="font-size: 30px; margin: 0;">//</span>
+            <h2 id="username-label">Welcome, <?php echo htmlspecialchars($username); ?>!</h2>
             <button onclick="newNote()" id="new-note-button">New Note</button>
         </header>
         <content>
@@ -19,7 +22,7 @@
             </div>
             <div class="background-modal" id="background-modal">
                 <div class="note-modal" id="note-modal">
-                    <button class="delete-note" onclick="showCancelPopup()"><img src='assets/icons/close-trashbin-icon.png' id='cancel-trashbin-icon'></button>
+                    <button class="delete-note" onclick="showCancelPopup()"><img src='../assets/icons/close-trashbin-icon.png' id='cancel-trashbin-icon'></button>
                     <input type="text" id="note-title" placeholder="Title">
                     <hr>
                     <div id="editor"></div>
@@ -41,6 +44,6 @@
             <script src="script.js"></script>
         </footer>
     </div>
-    <button onclick="toggleTheme()" id="theme-toggle-button"><img src='assets/icons/light-mode-icon.png' id="icon-theme"><p id="text-theme">Light Mode</p></button>
+    <button onclick="toggleTheme()" id="theme-toggle-button"><img src='../assets/icons/light-mode-icon.png' id="icon-theme"><p id="text-theme">Switch Light</p></button>
 </body>
 </html>

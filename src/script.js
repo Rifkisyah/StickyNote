@@ -10,12 +10,12 @@ function toggleTheme() {
     const themeToggleButton = document.getElementById('theme-toggle-button');
 
     if(html.dataset.theme === 'dark') {
-        img.src = 'assets/icons/light-mode-icon.png';
-        txt.innerText = 'Light Mode';
+        img.src = '../assets/icons/light-mode-icon.png';
+        txt.innerText = 'Switch Light';
         themeToggleButton.insertBefore(img, txt);
     } else if (html.dataset.theme === 'light') {
-        img.src = 'assets/icons/dark-mode-icon.png';
-        txt.innerText = 'Dark Mode';
+        img.src = '../assets/icons/dark-mode-icon.png';
+        txt.innerText = 'Switch Dark';
         themeToggleButton.insertBefore(txt, img);
     } 
 }
@@ -47,6 +47,9 @@ function showDeleteNotePopup(element) {
     document.getElementById('confirmYes').onclick = () => {
         element.parentNode.remove();
         popup.style.display = 'none';
+        if ([...document.querySelectorAll('#notes-container .note')].length === 0){
+            document.getElementById('empty-label').style.display = 'flex';
+        }
     };
 }
 
@@ -71,13 +74,13 @@ document.getElementById('confirmNo').onclick = () => {
 }
   
 document.getElementById('deleteButton').addEventListener('click', () => {
-showConfirmPopup((confirmed) => {
-    if (confirmed) {
-    console.log('Data dihapus!');
-    } else {
-    console.log('Batal dihapus');
-    }
-});
+    showConfirmPopup((confirmed) => {
+        if (confirmed) {
+        console.log('Data dihapus!');
+        } else {
+        console.log('Batal dihapus');
+        }
+    });
 });
 
 function addNoteToDashboard(){
@@ -99,7 +102,7 @@ function addNoteToDashboard(){
     note.classList.add('note-card');
     note.innerHTML = `
         <button class="delete-note" onclick="showDeleteNotePopup(this)">
-            <img src='assets/icons/close-trashbin-icon.png' id='trashbin-icon'>
+            <img src='../assets/icons/close-trashbin-icon.png' id='trashbin-icon'>
         </button>
         <h1>${title}</h1>
         <hr>
