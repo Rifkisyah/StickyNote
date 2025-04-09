@@ -57,7 +57,7 @@ function addNoteToDashboard(){
 
     contentInput.value = content;
 
-    fetch('add_notes.php', {
+    fetch('./CRUD/add_notes.php', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded'
@@ -68,13 +68,15 @@ function addNoteToDashboard(){
       .then(data => {
         console.log(data);
     });
+    quill.setContents([]);
+    titleInput.value = '';
     getNotes();
 }
 
 // get / load note
 
 function getNotes() {
-    fetch('get_notes.php')
+    fetch('./CRUD/get_notes.php')
         .then(response => response.json())
         .then(data => {
             const notesContainer = document.getElementById('notes-container');
@@ -105,16 +107,25 @@ function getNotes() {
                 deleteButton.addEventListener('click', () => showDeleteNotePopup(note.id, deleteButton));
 
                 const titleElement = document.createElement('h1');
+                titleElement.classList.add('note-title');
                 titleElement.textContent = note.title;
 
+                const titleContainer = document.createElement('div');
+                titleContainer.classList.add('note-header');
+
+                titleContainer.appendChild(titleElement);
+                titleContainer.appendChild(deleteButton);
+
                 const hr = document.createElement('hr');
+                hr.classList.add('note-hr');
+                hr.style.width = '100%';
 
                 const contentElement = document.createElement('div');
+                contentElement.classList.add('note-content');
                 contentElement.innerHTML = note.content;
 
                 // Masukkan ke noteElement
-                noteElement.appendChild(deleteButton);
-                noteElement.appendChild(titleElement);
+                noteElement.appendChild(titleContainer);
                 noteElement.appendChild(hr);
                 noteElement.appendChild(contentElement);
 
@@ -136,7 +147,7 @@ window.addEventListener('DOMContentLoaded', () => {
 // delete note
 
 function deleteNote(id) {
-    fetch('delete_notes.php', {
+    fetch('./CRUD/delete_notes.php', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/x-www-form-urlencoded',

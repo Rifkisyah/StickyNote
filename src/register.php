@@ -10,7 +10,7 @@
     <div class="auth-container">
         <h1>Welcome to StickyNote</h1><hr>
         <p>Please Register to continue</p>
-        <form id="auth-form" method="POST" action="authentication.php">
+        <form id="auth-form" method="POST" action="./CRUD/authentication.php">
             <input type="hidden" name="action" value="register">
             <input type="text" id="username" name="username" placeholder="Username" required>
             <input type="password" id="password" name="password" placeholder="Password" required>

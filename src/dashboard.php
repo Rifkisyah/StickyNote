@@ -1,4 +1,4 @@
-<?php include "authentication.php"; ?>
+<?php include "./CRUD/authentication.php"; ?>
 <!DOCTYPE html>
 <html lang="en" data-theme="dark">
 <head>
@@ -21,12 +21,14 @@
             </div>
             <div class="background-modal" id="background-modal">
                 <div class="note-modal" id="note-modal">
-                    <button class="delete-note" onclick="showCancelPopup()"><img src='../assets/icons/close-trashbin-icon.png' id='cancel-trashbin-icon'></button>
-                    <form class="note-form" id="note-form" method="POST" action="add_notes.php">
+                    <div class="note-header">
+                        <h2 id="note-title-label">Add New Note</h2>
+                        <button class="delete-note" onclick="showCancelPopup()"><img src='../assets/icons/close-trashbin-icon.png' id='cancel-trashbin-icon'></button>
+                    </div>
+                    <form class="note-form" id="note-form" method="POST" action="./CRUD/add_notes.php">
                         <input type="hidden" name="action" value="add_note">
-                        <input type="text" name="title" id="note-title" placeholder="Title">
+                        <input type="text" name="title" id="note-title" class="note-title" placeholder="Title">
                         <input type="hidden" name="content" id="hidden-content">
-                        <hr>
                         <div id="editor"></div>
                         <button type="button" id="save-note-button" onclick="addNoteToDashboard()">Save Note</button>
                     </form>

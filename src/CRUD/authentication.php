@@ -15,13 +15,13 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
         $stmt->execute([$username]);
 
         if ($stmt->rowCount() > 0) {
-            header("Location: register.php?error=1");
+            header("Location: ../register.php?error=1");
             exit;
         } else {
             $stmt = $database->prepare("INSERT INTO users (uid, username, password) VALUES (?, ?, ?)");
             $stmt->execute([$uid, $username, $password]);
             $_SESSION["uid"] = $uid;
-            header("Location: dashboard.php");
+            header("Location: ../dashboard.php");
             exit;
         }
     }
@@ -36,10 +36,10 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         if ($user && password_verify($password, $user["password"]) && $user["password"] != "") {
             $_SESSION["uid"] = $user["uid"];
-            header("Location: dashboard.php");
+            header("Location: ../dashboard.php");
             exit;
         } else {
-            header("Location: login.php?error=1");
+            header("Location: ../login.php?error=1");
             exit;
         }        
     }

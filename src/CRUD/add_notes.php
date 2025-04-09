@@ -13,7 +13,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $stmt = $database->prepare("INSERT INTO notes (note_id, note_title, note_content, uid) VALUES (?, ?, ?, ?)");
         $stmt->execute([$id, $title, $content, $uid]);
 
-        header("Location: dashboard.php");
+        header("Location: ../dashboard.php");
         exit;
     }
 }
