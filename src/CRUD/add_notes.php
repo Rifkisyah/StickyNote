@@ -31,3 +31,5 @@ function generate_unique_id($database){
     } while ($count > 0);
     return $id;
 }
+
+?>
