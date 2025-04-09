@@ -80,9 +80,16 @@ function getNotes() {
             const notesContainer = document.getElementById('notes-container');
             notesContainer.innerHTML = '';
 
-            const emptyLabel = document.getElementById('empty-label');
+            let emptyLabel = document.getElementById('empty-label');
+            if (!emptyLabel) {
+                emptyLabel = document.createElement('p');
+                emptyLabel.id = 'empty-label';
+                emptyLabel.textContent = 'Notes Empty...';
+                notesContainer.appendChild(emptyLabel);
+            }
+
             if (emptyLabel) {
-                emptyLabel.style.display = data.length === 0 ? 'flex' : 'none';
+                emptyLabel.style.display = data.length === 0 ? 'block' : 'none';
             }
 
             data.forEach(note => {

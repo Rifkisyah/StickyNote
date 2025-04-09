@@ -10,15 +10,14 @@
 </head>
 <body>
     <div class="main-container">
+    <a href="dashboard.php" id="logo">Sticky Note</a>
         <header>
-            <a href="dashboard.php" id="logo">Sticky Note</a>
-            <span style="font-size: 30px; margin: 0;">//</span>
             <h2 id="username-label">Welcome, <?php echo htmlspecialchars($username); ?>!</h2>
             <button onclick="newNote()" id="new-note-button">New Note</button>
         </header>
         <main>
             <div id="notes-container">
-                <p id="empty-label">still empty buddy...</p>
+                <p id="empty-label">Notes Empty...</p>
             </div>
             <div class="background-modal" id="background-modal">
                 <div class="note-modal" id="note-modal">
