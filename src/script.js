@@ -1,4 +1,22 @@
+// quill.js
+
 let quill;
+
+document.addEventListener('DOMContentLoaded', () => {
+    quill = new Quill('#editor', {
+      theme: 'snow',
+      modules: {
+        toolbar: [
+          ['bold', 'italic', 'underline'],
+          [{ 'list': 'ordered' }, { 'list': 'bullet' }],
+          ['link'],
+          ['clean']
+        ]
+      }
+    });
+});
+
+// toggle theme
 
 function toggleTheme() {
     const html = document.documentElement;
@@ -18,42 +36,138 @@ function toggleTheme() {
         txt.innerText = 'Switch Dark';
         themeToggleButton.insertBefore(txt, img);
     } 
-}
+};
+
+// add note
 
 function newNote() {
     document.getElementById('background-modal').style.display = 'flex';
     document.getElementById('note-modal').style.display = 'block';
     quill.enable(true);
+};
+
+function addNoteToDashboard(){
+    document.getElementById('background-modal').style.display = 'none';
+    document.getElementById('note-modal').style.display = 'none';
+
+    const titleInput = document.getElementById('note-title');
+    const contentInput = document.getElementById('hidden-content');
+    let title = titleInput.value;
+    let content = quill.root.innerHTML;
+
+    contentInput.value = content;
+
+    fetch('add_notes.php', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: `action=add_note&title=${encodeURIComponent(title)}&content=${encodeURIComponent(content)}`
+      })
+      .then(response => response.text())
+      .then(data => {
+        console.log(data);
+    });
+    getNotes();
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-    quill = new Quill('#editor', {
-      theme: 'snow',
-      modules: {
-        toolbar: [
-          ['bold', 'italic', 'underline'],
-          [{ 'list': 'ordered' }, { 'list': 'bullet' }],
-          ['link'],
-          ['clean']
-        ]
-      }
-    });
-})
+// get / load note
 
-function showDeleteNotePopup(element) {
+function getNotes() {
+    fetch('get_notes.php')
+        .then(response => response.json())
+        .then(data => {
+            const notesContainer = document.getElementById('notes-container');
+            notesContainer.innerHTML = '';
+
+            const emptyLabel = document.getElementById('empty-label');
+            if (emptyLabel) {
+                emptyLabel.style.display = data.length === 0 ? 'flex' : 'none';
+            }
+
+            data.forEach(note => {
+                const noteElement = document.createElement('div');
+                noteElement.classList.add('note-card');
+                
+                // Gunakan DOM element biasa untuk button agar addEventListener bisa dipakai
+                const deleteButton = document.createElement('button');
+                deleteButton.classList.add('delete-note');
+                deleteButton.innerHTML = `
+                    <img src='../assets/icons/close-trashbin-icon.png' id='trashbin-icon'>
+                `;
+                deleteButton.addEventListener('click', () => showDeleteNotePopup(note.id, deleteButton));
+
+                const titleElement = document.createElement('h1');
+                titleElement.textContent = note.title;
+
+                const hr = document.createElement('hr');
+
+                const contentElement = document.createElement('div');
+                contentElement.innerHTML = note.content;
+
+                // Masukkan ke noteElement
+                noteElement.appendChild(deleteButton);
+                noteElement.appendChild(titleElement);
+                noteElement.appendChild(hr);
+                noteElement.appendChild(contentElement);
+
+                // Masukkan ke container
+                notesContainer.appendChild(noteElement);
+            });
+        })
+        .catch(error => console.error('Error fetching notes:', error));
+}
+
+
+// load on refresh
+
+window.addEventListener('DOMContentLoaded', () => {
+    console.log('DOM fully loaded and parsed');
+    getNotes();
+});
+
+// delete note
+
+function deleteNote(id) {
+    fetch('delete_notes.php', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: `id=${encodeURIComponent(id)}`
+    })
+    .then(response => response.text())
+    .then(result => {
+        console.log('Delete result:', result);
+        getNotes();
+    })
+    .catch(error => {
+        console.error('Error deleting note:', error);
+    });
+}
+
+let noteToDelete = null;
+
+function showDeleteNotePopup(id, element) {
+    noteIdToDelete = id;
     const popup = document.getElementById('confirmPopup');
     popup.style.display = 'flex';
 
     document.getElementById('confirmYes').onclick = () => {
+        deleteNote(noteIdToDelete);
         element.parentNode.remove();
         popup.style.display = 'none';
         if ([...document.querySelectorAll('#notes-container .note')].length === 0){
             document.getElementById('empty-label').style.display = 'flex';
         }
     };
+    document.getElementById('confirmNo').onclick = () => {
+        popup.style.display = 'none';
+        noteToDeleteId = null;
+    };
 }
 
-function showCancelPopup(callback) {
+function showCancelPopup() {
     const popup = document.getElementById('confirmPopup');
     popup.style.display = 'flex';
     
@@ -63,51 +177,18 @@ function showCancelPopup(callback) {
         document.getElementById('note-modal').style.display = 'none';
         document.getElementById('note-title').value = '';
         quill.setContents([]);
-    
-        callback(true);
-    };
-
-document.getElementById('confirmNo').onclick = () => {
-    popup.style.display = 'none';
-    callback(false);
+    }
 };
-}
-  
-document.getElementById('deleteButton').addEventListener('click', () => {
-    showConfirmPopup((confirmed) => {
-        if (confirmed) {
-        console.log('Data dihapus!');
-        } else {
-        console.log('Batal dihapus');
-        }
-    });
+
+document.getElementById('confirmYes').addEventListener('click', () => {
+    if (noteIdToDelete !== null) {
+        deleteNote(noteIdToDelete);
+        noteIdToDelete = null;
+        document.getElementById('confirmPopup').style.display = 'none';
+    }
 });
 
-function addNoteToDashboard(){
-    document.getElementById('background-modal').style.display = 'none';
-    document.getElementById('note-modal').style.display = 'none';
-
-    const titleInput = document.getElementById('note-title');
-    const title = titleInput.value;
-    let content = quill.root.innerHTML;
-
-    // Reset input
-    titleInput.value = '';
-    quill.setContents([]);
-    document.getElementById('empty-label').style.display = 'none';
-    document.getElementById('notes-container').style.height = 'fit-content';
-
-    // Buat note baru
-    const note = document.createElement('div');
-    note.classList.add('note-card');
-    note.innerHTML = `
-        <button class="delete-note" onclick="showDeleteNotePopup(this)">
-            <img src='../assets/icons/close-trashbin-icon.png' id='trashbin-icon'>
-        </button>
-        <h1>${title}</h1>
-        <hr>
-        <div>${content}</div>
-    `;
-
-    document.getElementById('notes-container').appendChild(note);
-}
+document.getElementById('confirmNo').addEventListener('click', () => {
+    noteIdToDelete = null;
+    document.getElementById('confirmPopup').style.display = 'none';
+});
